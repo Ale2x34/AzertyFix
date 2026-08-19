@@ -4,6 +4,10 @@
 
 MECCHA CHAMELEON est câblé en QWERTY et n'a **aucun menu de remappage clavier**. Sur un clavier AZERTY, WASD tombe n'importe où et le jeu est injouable. AzertyFix règle ça.
 
+### ➜ [Télécharger la dernière version](https://github.com/Ale2x34/AzertyFix/releases/latest)
+
+Rien à installer, aucune dépendance. Décompresse, lance `AzertyFix.exe`.
+
 ## Ce que ça fait
 
 L'outil inverse deux paires de touches :
