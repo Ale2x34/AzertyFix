@@ -1,0 +1,38 @@
+AzertyFix — MECCHA CHAMELEON en AZERTY
+Copyright © 2026 Ale2x_. Tous droits réservés.
+
+Ce logiciel et son code source sont publiés pour consultation et pour
+usage personnel. Ils ne sont PAS placés sous une licence libre.
+
+
+CE QUE TU PEUX FAIRE
+--------------------
+  - Télécharger et utiliser le programme, autant que tu veux, gratuitement.
+  - Lire le code source.
+  - Le compiler toi-même pour ton usage personnel.
+  - Partager le lien vers ce dépôt.
+
+
+CE QUE TU NE PEUX PAS FAIRE SANS L'ACCORD ÉCRIT DE L'AUTEUR
+-----------------------------------------------------------
+  - Redistribuer le programme ou son code, ici ou ailleurs.
+  - Le republier sous ton nom, ou en publier une version modifiée.
+  - Le vendre, ou l'inclure dans quoi que ce soit de payant.
+  - L'intégrer dans un autre projet ou logiciel.
+  - Retirer ou modifier les mentions d'auteur.
+
+Pour toute demande, contacte l'auteur : Ale2x_
+
+
+ABSENCE DE GARANTIE
+-------------------
+Le logiciel est fourni « tel quel », sans garantie d'aucune sorte,
+explicite ou implicite. L'auteur ne pourra être tenu responsable d'aucun
+dommage résultant de son utilisation.
+
+
+MENTION
+-------
+MECCHA CHAMELEON appartient à ses auteurs. AzertyFix n'est ni affilié ni
+approuvé par eux, ne modifie aucun fichier du jeu, et ne fait qu'échanger
+des touches au niveau du clavier Windows.

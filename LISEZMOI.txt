@@ -1,0 +1,127 @@
+﻿========================================================================
+  AzertyFix 1.1 — MECCHA CHAMELEON en AZERTY
+  Développé par Ale2x_
+========================================================================
+
+LE PROBLÈME
+-----------
+MECCHA CHAMELEON (Unreal Engine 5) est câblé en QWERTY et n'a AUCUN menu
+de remappage clavier. Les touches sont figées dans les fichiers .pak du
+jeu, et le fichier UINavigation.ini dans %LOCALAPPDATA%\Chameleon n'est
+qu'un cache des valeurs par défaut : le modifier ne change rien en jeu.
+Sur un clavier AZERTY, WASD tombe donc n'importe où et le jeu est
+injouable.
+
+CE QUE FAIT L'OUTIL
+-------------------
+Il inverse deux paires de touches :
+
+        A <-> Q          et          Z <-> W
+
+UNIQUEMENT quand la fenêtre du jeu est au premier plan. Dès que tu passes
+sur une autre application, ton clavier AZERTY redevient parfaitement
+normal. Rien n'est modifié dans les fichiers du jeu ni dans la
+configuration clavier de Windows.
+
+RÉSULTAT EN JEU
+---------------
+        Z = avancer                 (envoie W)
+        Q = gauche                  (envoie A)
+        S = reculer                 (S, inchangé)
+        D = droite                  (D, inchangé)
+        A = Release / Copy Create   (envoie Q)
+
+Toutes les autres touches du jeu (E F R C V X G Y B T, 1, Espace, Maj,
+Ctrl, Alt, Échap, Tab) sont déjà au même endroit physique sur AZERTY et
+sur QWERTY : elles ne sont pas touchées.
+
+INSTALLATION
+------------
+Il n'y a rien à installer. Décompresse le dossier où tu veux et lance
+AzertyFix.exe. Une icône apparaît dans la zone de notification, à côté de
+l'horloge. Tu peux le lancer avant ou pendant une partie, peu importe.
+
+  F9   Active / désactive le remap à la volée. Pratique pour taper dans
+       le chat du jeu avec un vrai AZERTY.
+  F10  Ouvre le journal de diagnostic.
+
+Clic droit sur l'icône pour : le mode scancode, le lancement automatique
+avec Windows, le journal, « À propos » et quitter.
+
+« WINDOWS A PROTÉGÉ VOTRE ORDINATEUR »
+--------------------------------------
+C'est normal et attendu. Le programme n'est pas signé numériquement (une
+signature coûte plusieurs centaines d'euros par an), et surtout il
+utilise un « hook clavier bas niveau » — la même technique qu'un
+logiciel de macros, mais aussi celle d'un keylogger. Les antivirus sont
+donc méfiants par principe, sans distinguer les deux usages.
+
+Pour lancer quand même : Informations complémentaires > Exécuter quand
+même. Si tu n'as pas confiance — ce qui est une réaction saine — le code
+source complet est fourni dans AzertyFix.cs : il est lisible, et tu peux
+le recompiler toi-même (voir plus bas) pour obtenir un exécutable dont tu
+es certain du contenu.
+
+VIE PRIVÉE
+----------
+  - Rien n'est envoyé sur Internet. Le programme n'ouvre aucune connexion
+    réseau, il n'y a d'ailleurs aucun code réseau dans la source.
+  - Les seules touches lues sont A, Q, Z et W. Toutes les autres frappes
+    traversent le programme sans être ni examinées ni enregistrées.
+  - Le journal de diagnostic est DÉSACTIVÉ par défaut. Activé, il reste
+    sur ton disque, et il ne note jamais le nom ni le titre des fenêtres
+    autres que le jeu : rien de ce que tu fais ailleurs sur ton PC n'y
+    apparaît.
+  - Les seules traces laissées sur le système sont deux clés de registre
+    dans HKEY_CURRENT_USER : Software\Ale2x_\AzertyFix pour tes réglages,
+    et l'entrée de démarrage automatique si tu l'actives.
+
+SI ÇA NE MARCHE PAS
+-------------------
+1. Vérifie que le remap est actif (clic droit sur l'icône, « Remap actif »
+   doit être coché).
+2. Active « Journal de diagnostic », retourne en jeu, appuie sur ZQSD,
+   puis rouvre le journal avec F10. Il te dira si la fenêtre du jeu est
+   bien reconnue et si les touches sont envoyées.
+3. Si le journal dit « envoie » mais que le personnage ne bouge pas,
+   coche « Mode scancode » : certains moteurs ignorent les touches
+   virtuelles et ne lisent que les codes physiques.
+4. Si le journal signale « SendInput refusé », le jeu tourne en
+   administrateur et pas AzertyFix. Lance AzertyFix en administrateur
+   aussi (clic droit > Exécuter en tant qu'administrateur).
+
+RECOMPILER SOI-MÊME
+-------------------
+Aucun outil à télécharger : le compilateur C# est déjà fourni avec
+Windows. Ouvre une invite de commandes dans le dossier et lance :
+
+  C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe -nologo ^
+    -target:winexe -optimize+ -out:AzertyFix.exe -r:System.dll ^
+    -r:System.Drawing.dll -r:System.Windows.Forms.dll AzertyFix.cs
+
+Le fichier AzertyFix.cs doit garder son BOM UTF-8, sinon les accents sont
+cassés à la compilation.
+
+L'ADAPTER À UN AUTRE JEU
+------------------------
+La même recette marche pour n'importe quel jeu QWERTY-only. Dans
+AzertyFix.cs, modifie GameProcessPrefixes et GameWindowTitle pour viser
+le bon programme, puis recompile.
+
+Attention à un piège : le nom du processus n'est pas toujours celui de
+l'exécutable que tu lances. Pour MECCHA CHAMELEON, PenguinHotel.exe n'est
+qu'un lanceur et le jeu tourne en réalité dans
+PenguinHotel-Win64-Shipping.exe. Le journal affiche le nom du processus
+de la fenêtre active : c'est le moyen le plus simple de trouver le bon.
+
+DÉSINSTALLATION
+---------------
+Quitte le programme via l'icône, décoche le lancement automatique, puis
+supprime le dossier. Pour effacer aussi les réglages, supprime la clé
+HKEY_CURRENT_USER\Software\Ale2x_ dans regedit.
+
+========================================================================
+Fourni tel quel, sans garantie. Fais-en ce que tu veux.
+MECCHA CHAMELEON appartient à ses auteurs ; cet outil n'est ni affilié
+ni approuvé par eux, et ne modifie aucun fichier du jeu.
+========================================================================
