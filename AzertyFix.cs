@@ -1,16 +1,4 @@
-﻿// AzertyFix - MECCHA CHAMELEON
-// Developpe par Ale2x_
-//
-// Remappe A<->Q et Z<->W uniquement quand la fenetre du jeu est au premier plan,
-// pour rendre le jeu jouable au clavier AZERTY (il n'a aucun menu de rebind).
-//
-// Compilation (aucun outil a installer, csc.exe est fourni avec Windows) :
-//   C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe -nologo -target:winexe
-//     -optimize+ -out:AzertyFix.exe -r:System.dll -r:System.Drawing.dll
-//     -r:System.Windows.Forms.dll AzertyFix.cs
-// Le fichier doit garder son BOM UTF-8, sinon les accents sont casses.
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -35,14 +23,13 @@ static class AzertyFix
     const string AUTHOR = "Développé par Ale2x_";
     const string VERSION = "1.1";
 
-    // ---- Win32 ----
     const int WH_KEYBOARD_LL = 13;
     const int WM_KEYDOWN = 0x0100, WM_KEYUP = 0x0101, WM_SYSKEYDOWN = 0x0104, WM_SYSKEYUP = 0x0105;
     const uint LLKHF_INJECTED = 0x10;
     const uint KEYEVENTF_KEYUP = 0x0002, KEYEVENTF_SCANCODE = 0x0008;
     const uint MAPVK_VK_TO_VSC = 0;
     const uint INPUT_KEYBOARD = 1;
-    static readonly IntPtr TAG = new IntPtr(0x415A4659); // marque nos propres evenements
+    static readonly IntPtr TAG = new IntPtr(0x415A4659);
 
     [StructLayout(LayoutKind.Sequential)]
     struct KBDLLHOOKSTRUCT { public uint vkCode; public uint scanCode; public uint flags; public uint time; public IntPtr dwExtraInfo; }
@@ -69,19 +56,18 @@ static class AzertyFix
     [DllImport("user32.dll")] static extern uint MapVirtualKey(uint uCode, uint uMapType);
     [DllImport("user32.dll", CharSet = CharSet.Auto)] static extern int GetWindowText(IntPtr hWnd, StringBuilder s, int n);
 
-    // ---- Reglages persistants ----
     const string APP_NAME = "AzertyFix-Meccha";
     const string REG_KEY = @"Software\Ale2x_\AzertyFix";
     const string RUN_KEY = @"Software\Microsoft\Windows\CurrentVersion\Run";
-    const int VK_TOGGLE = 0x78;   // F9
-    const int VK_LOG = 0x79;      // F10
+    const int VK_TOGGLE = 0x78;
+    const int VK_LOG = 0x79;
 
     static IntPtr _hook = IntPtr.Zero;
-    static HookProc _proc;                 // reference gardee : sinon le GC la collecte
+    static HookProc _proc;
     static Mutex _mutex;
     static bool _enabled = true;
     static bool _scancodeMode = false;
-    static bool _logging = false;          // desactive par defaut : voir Log()
+    static bool _logging = false;
     static NotifyIcon _tray;
     static ToolStripMenuItem _miEnabled, _miScan, _miLog, _miStartup;
     static string _logPath;
@@ -91,19 +77,15 @@ static class AzertyFix
     static bool _lastPidIsGame = false;
     static string _lastPidName = "?";
 
-    // Le lanceur est PenguinHotel.exe, mais le jeu tourne dans
-    // PenguinHotel-Win64-Shipping.exe (binaire Unreal), fenetre titree "Chameleon".
     static readonly string[] GameProcessPrefixes = { "PenguinHotel", "Chameleon" };
     const string GameWindowTitle = "Chameleon";
 
-    // Seules ces 4 touches different de place entre AZERTY et QWERTY
-    // parmi celles utilisees par le jeu.
     static readonly Dictionary<uint, ushort> Map = new Dictionary<uint, ushort>
     {
-        { 0x41, 0x51 }, // A -> Q
-        { 0x51, 0x41 }, // Q -> A
-        { 0x5A, 0x57 }, // Z -> W
-        { 0x57, 0x5A }, // W -> Z
+        { 0x41, 0x51 },
+        { 0x51, 0x41 },
+        { 0x5A, 0x57 },
+        { 0x57, 0x5A },
     };
 
     [STAThread]
@@ -172,17 +154,13 @@ static class AzertyFix
         Application.Run();
     }
 
-    // ---- Journal ----
-    // Desactive par defaut et volontairement avare : il ne note JAMAIS le titre
-    // ni le nom des fenetres qui ne sont pas le jeu, pour ne rien enregistrer de
-    // ce que l'utilisateur fait ailleurs sur son PC.
     static string ResolveLogPath()
     {
         try
         {
             string dir = Path.GetDirectoryName(Application.ExecutablePath);
             string probe = Path.Combine(dir, "azertyfix.tmp");
-            File.WriteAllText(probe, "x");   // le dossier est-il inscriptible ?
+            File.WriteAllText(probe, "x");
             File.Delete(probe);
             return Path.Combine(dir, "log.txt");
         }
@@ -230,7 +208,6 @@ static class AzertyFix
         try { Process.Start("notepad.exe", _logPath); } catch { }
     }
 
-    // ---- Reglages ----
     static void LoadSettings()
     {
         try
@@ -261,7 +238,6 @@ static class AzertyFix
 
     static Icon LoadIcon()
     {
-        // Icone du jeu si Steam est installe la ou il dit l'etre, sinon icone par defaut.
         try
         {
             using (var k = Registry.CurrentUser.OpenSubKey(@"Software\Valve\Steam", false))
@@ -342,7 +318,7 @@ static class AzertyFix
         if (hwnd == IntPtr.Zero) return false;
         uint pid; GetWindowThreadProcessId(hwnd, out pid);
         if (pid == 0) return false;
-        if (pid == _lastPid) return _lastPidIsGame;   // cache : evite un appel par frappe
+        if (pid == _lastPid) return _lastPidIsGame;
 
         _lastPid = pid; _lastPidIsGame = false; _lastPidName = "?";
         try
@@ -358,13 +334,11 @@ static class AzertyFix
 
         if (!_lastPidIsGame)
         {
-            // Filet de securite si le binaire est renomme a une mise a jour.
             var sb = new StringBuilder(256); GetWindowText(hwnd, sb, sb.Capacity);
             if (sb.ToString().Trim().StartsWith(GameWindowTitle, StringComparison.OrdinalIgnoreCase))
                 _lastPidIsGame = true;
         }
 
-        // On ne journalise que le jeu : rien sur les autres fenetres.
         Log(_lastPidIsGame
             ? "Fenêtre active = le jeu (" + _lastPidName + ") — remap opérationnel"
             : "Fenêtre active = autre application — remap en veille");
@@ -403,7 +377,6 @@ static class AzertyFix
         if (isDown && kb.vkCode == VK_TOGGLE) { Toggle(); return CallNextHookEx(_hook, nCode, wParam, lParam); }
         if (isDown && kb.vkCode == VK_LOG) { OpenLog(); return CallNextHookEx(_hook, nCode, wParam, lParam); }
 
-        // Toute touche hors des 4 concernees ressort ici sans etre ni lue ni notee.
         ushort target;
         if (!Map.TryGetValue(kb.vkCode, out target)) return CallNextHookEx(_hook, nCode, wParam, lParam);
 
@@ -411,7 +384,7 @@ static class AzertyFix
         {
             Log("  " + (char)kb.vkCode + (isDown ? " enfoncée" : " relâchée") + " → envoie " + (char)target);
             Send(target, isUp);
-            return (IntPtr)1;   // bloque la touche d'origine
+            return (IntPtr)1;
         }
         return CallNextHookEx(_hook, nCode, wParam, lParam);
     }
